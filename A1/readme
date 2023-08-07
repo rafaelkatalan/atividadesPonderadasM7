@@ -1,0 +1,16 @@
+Rafael Katalan
+
+docker pull command: docker pull rafikatalan/a1-flask
+
+Nesta atividade desenvolvi um simples servidor com flask para exibir uma pagina HTML com meu curriculo. O dockerfile que cria a imagem do container no qual o app roda parte do python, cria um diretorio "app" no qual estão os arquivos, instala o flask apartir no requirements e expõem a porta 5000.
+
+instruções:
+
+No terminal:
+
+docker build -t  a1-flask .
+docker run -it -p 5000:5000 a1-flask
+
+A pagina deve poder ser vizualizada pelo browser na rota:
+
+http://127.0.0.1:5000/
