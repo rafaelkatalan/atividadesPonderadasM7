@@ -1,16 +1,17 @@
 import psycopg2
-from flask import Flask, render_template, request, jsonify, redirect
-from sqlalchemy import create_engine
-import datetime
+from flask import Flask, render_template, request, jsonify, redirect, session
+from flask_jwt_extended import JWTManager, create_access_token, decode_token
 
 app = Flask(__name__)
+app.secret_key = 'any random string'
+jwt = JWTManager(app)
 
 def connect_to_db():
     connection = psycopg2.connect(
         dbname="postgres",
         user="postgres",
         password="senha",
-        host="localhost",
+        host="db",
         port="5432"
     )
     return connection
@@ -18,15 +19,17 @@ def connect_to_db():
 def checkUser():
     connection = connect_to_db()
     cursor = connection.cursor()
-    user = 'userTeste'
-    cursor.execute(f"SELECT * FROM users WHERE username = '{user}'")
+    access_token = session['access_token']
+    current_user = decode_token(access_token)['sub']
+    cursor.execute(f"SELECT * FROM users WHERE username = '{current_user[1]}'")
     user = cursor.fetchone()
-    if user[2] == 'teste123':
-        return [True, user[0]]
-
-#@app.route('/')
-#def index():
-#    return render_template('index.html')
+    try:
+        if user[2] == current_user[2]:
+            return True, user
+        else:
+            return False, user
+    except:
+        return False, user
 
 @app.route('/loginPage')
 def loginPage():
@@ -35,22 +38,22 @@ def loginPage():
 
 @app.route('/login', methods=['POST'])
 def login():
-    #read user and password from db
     connection = connect_to_db()
     cursor = connection.cursor()
     username = request.form.get('username')
     password = request.form.get('password')
-    print(username, password)
     cursor.execute(f"SELECT * FROM users WHERE username = '{username}'")
     users = cursor.fetchone()
-    print(users)
     connection.close()
     if password == users[2]:
+        access_token = create_access_token(identity=users)
+        print(access_token)
+        session['access_token'] = access_token
         print('Login realizado com sucesso')
-        return jsonify({'status': 'success'})
+        return redirect('/getnotes')
     else:
         print('Login falhou')
-        return jsonify({'status': 'fail'})
+        return jsonify({'status': 'fail, wrong password or username'})
 
 @app.route('/newnotePage')
 def newnotePage():
@@ -60,41 +63,51 @@ def newnotePage():
 def newnote():
     user = checkUser()
     if user[0]:
-        
+        access_token = session['access_token']
+        current_user = decode_token(access_token)['sub']
         connection = connect_to_db()
         cursor = connection.cursor()
         title = request.form.get('title')
         content = request.form.get('content')
-        to_do_date = request.form.get('date')  # Replace this with the actual timestamp
-        print(title, content, to_do_date)
-        # Use parameterized query to prevent SQL injection
-        cursor.execute("INSERT INTO notes (title, content, to_do_date, user_id) VALUES (%s, %s, %s, %s)", (title, content, to_do_date, user[1]))
+        to_do_date = request.form.get('date')
+        cursor.execute("INSERT INTO notes (title, content, to_do_date, user_id) VALUES (%s, %s, %s, %s)", (title, content, to_do_date, current_user[0]))
 
         connection.commit()
         connection.close()
 
         return redirect('/getnotes')
     else:
-        return jsonify({'status': 'fail'})
+        return redirect('/loginPage')
 
 @app.route('/getnotes', methods=['GET'])
 def getnotes():
     user = checkUser()
     if user[0]:
+        access_token = session['access_token']
+        current_user = decode_token(access_token)['sub']
         connection = connect_to_db()
         cursor = connection.cursor()
-        cursor.execute(f"SELECT * FROM notes WHERE user_id = '{user[1]}'")
+        cursor.execute(f"SELECT * FROM notes WHERE user_id = {current_user[0]}")
         notes = cursor.fetchall()
-        print(notes)
         connection.close()
         return render_template('notes.html', notes=notes)
+    else:
+        return redirect('/loginPage')
+    
+@app.route('/removenote', methods=['POST'])
+def removenote():
+    user = checkUser()
+    if user[0]:
+        connection = connect_to_db()
+        cursor = connection.cursor()
+        id = request.form.get('id')
+        cursor.execute(f"DELETE FROM notes WHERE id = {id}")
+        connection.commit()
+        connection.close()
+        return redirect('/getnotes')
+    else:
+        return redirect('/loginPage')
 
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80)
-
-# Cria a instância da engine do banco de dados
-#alchemyEngine = create_engine('postgresql+psycopg2://postgres:senha@127.0.0.1:5432', pool_recycle=3600);
-
-#dbConnection = alchemyEngine.connect()
-
