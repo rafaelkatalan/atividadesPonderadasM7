@@ -12,7 +12,7 @@ O notebook `modelo.ipynb` cria um modelo de aprendizado de máquina que prevê o
 
 - **Preparação para Modelagem**: Prepara os dados para a construção do modelo de aprendizado de máquina, definindo a coluna alvo como "mortos".
 
-- **Modelagem com PyCaret**: Utiliza o framework PyCaret para simplificar a criação e avaliação de modelos de regressão. O modelo LightGBM é selecionado, ajustado e finalizado.
+- **Modelagem com PyCaret**: Nesta etapa, o notebook faz uso do framework PyCaret para simplificar o processo de criação e avaliação de modelos de regressão. Dentre os modelos treinados, o LightGBM se destacou como a escolha final devido ao seu desempenho superior, especialmente na capacidade de lidar com várias variáveis de entrada relevantes. O modelo LightGBM foi minuciosamente ajustado e refinado para otimizar suas previsões, tornando-o a escolha ideal para a tarefa em questão.
 
 - **Salvando o Modelo**: Salva o modelo finalizado como "lgbmregressor.pkl" para uso futuro.
 
