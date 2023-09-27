@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard do Flask</title>
+</head>
+<body>
+    <div class="graph">
+        <h2>Graph 1</h2>
+        <img src="data:image/png;base64,{{ plot_data1 }}" alt="Graph 1">
+    </div>
+    <div class="graph">
+        <h2>Graph 2</h2>
+        <img src="data:image/png;base64,{{ plot_data2 }}" alt="Graph 2">
+    </div>
+</body>
+<!--button redirect insertdata-->
+<a href="http://localhost:3000/inputData">Inserir Dados</a>
+</html>

@@ -1,0 +1,7 @@
+Flask
+Flask-JWT-Extended
+psycopg2-binary
+streamlit
+seaborn
+matplotlib
+pandas
