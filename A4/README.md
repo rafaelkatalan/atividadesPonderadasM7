@@ -13,8 +13,8 @@ Siga as etapas abaixo para executar a aplicação:
 1. Clone este repositório em sua máquina local:
 
    ```bash
-   git clone https://github.com/rafaelkatalan/A4-M7
-   cd A4-M7
+   git clone https://https://github.com/rafaelkatalan/atividadesPonderadasM7/tree/A3/A4
+   cd A4
    ```
 
 2. Construa as imagens Docker para os serviços do projeto usando o Docker Compose:
@@ -23,7 +23,7 @@ Siga as etapas abaixo para executar a aplicação:
    docker-compose up
    ```
 
-5. Acesse a aplicação web em seu navegador em [http://localhost:3000](http://localhost:3000).
+5. Acesse a aplicação web em seu navegador em [http://localhost:3000/loginPage](http://localhost:3000/loginPage).
 
 6. Você pode usar a interface web para fazer login como usuário "admin" com senha "admin" e fornecer dados para fazer previsões de acidentes de trânsito. (Neste repositorio as previsões não são reais, são apenas resultados aleatorios para demonstração. Para rodar com o modelo real siga as instruções dos comentarios no codigo no script [app.py](./backend/app.py))
 
